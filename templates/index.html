@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Description App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #description {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload an Image to Get Description</h1>
+    <input type="file" id="imageUpload" accept="image/*">
+    <button onclick="uploadImage()">Upload</button>
+    <div id="description"></div>
+
+    <script>
+        function uploadImage() {
+            const fileInput = document.getElementById('imageUpload');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select an image first.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://127.0.0.1:5000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.description) {
+                    document.getElementById('description').innerText = "Description: " + data.description;
+                } else {
+                    document.getElementById('description').innerText = "Error: " + data.error;
+                }
+            })
+            .catch(error => {
+                document.getElementById('description').innerText = "An error occurred: " + error;
+            });
+        }
+    </script>
+</body>
+</html>
